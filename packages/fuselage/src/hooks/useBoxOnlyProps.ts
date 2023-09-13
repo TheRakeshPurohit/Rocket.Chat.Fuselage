@@ -1,11 +1,17 @@
+import type { AllHTMLAttributes } from 'react';
+
 import { prependClassName } from '../helpers/prependClassName';
 
-export const useBoxOnlyProps = <T extends { className: string }>(
+export const useBoxOnlyProps = <
+  T extends { className: string; size?: AllHTMLAttributes<HTMLElement>['size'] }
+>(
   props: T & {
     animated?: boolean;
     withRichContent?: boolean | 'inlineWithoutBreaks';
     elevation?: '0' | '1' | '2';
-  } & Record<`rcx-${string}`, unknown>
+    htmlSize?: AllHTMLAttributes<HTMLElement>['size'];
+    size?: AllHTMLAttributes<HTMLElement>['size'];
+  }
 ): T => {
   Object.entries(props).forEach(([key, value]) => {
     if (key.slice(0, 4) === 'rcx-') {
@@ -44,6 +50,11 @@ export const useBoxOnlyProps = <T extends { className: string }>(
         'rcx-box--with-block-elements'
       );
     }
+  }
+
+  if (props.htmlSize) {
+    props.size = props.htmlSize;
+    delete props.htmlSize;
   }
 
   delete props.withRichContent;

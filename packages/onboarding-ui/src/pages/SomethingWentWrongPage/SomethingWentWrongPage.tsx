@@ -1,9 +1,7 @@
 import { Box, Margins } from '@rocket.chat/fuselage';
+import { BackgroundLayer, LayoutLogo } from '@rocket.chat/layout';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import BackgroundLayer from '../../common/BackgroundLayer';
-import { OnboardingLogo } from '../../common/OnboardingLogo';
 
 type SomethingWentWrongPageProps = {
   requestId?: string | undefined;
@@ -27,16 +25,9 @@ const SomethingWentWrongPage = ({
         paddingInline={16}
       >
         <Margins blockEnd={32}>
-          <OnboardingLogo />
+          <LayoutLogo.LayoutLogo />
 
-          <Box
-            fontWeight={800}
-            fontSize='x52'
-            lineHeight='x62'
-            fontFamily='sans'
-          >
-            {t('page.somethingWentWrongPage.title')}
-          </Box>
+          <Box fontScale='hero'>{t('page.somethingWentWrongPage.title')}</Box>
 
           <Box fontScale='p1'>{t('page.somethingWentWrongPage.subtitle')}</Box>
           {requestId && (

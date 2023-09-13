@@ -1,11 +1,9 @@
 import { Box, ButtonGroup, Button } from '@rocket.chat/fuselage';
+import { Form, List } from '@rocket.chat/layout';
 import type { ReactElement } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-
-import Form from '../../common/Form';
-import List from '../../common/List';
 
 export type StandaloneServerPayload = {
   registerType: 'registered' | 'standalone';
@@ -44,10 +42,12 @@ const StandaloneServerForm = ({
   return (
     <FormProvider {...form}>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Steps currentStep={currentStep} stepCount={stepCount} />
-        <Form.Title>{t('form.standaloneServerForm.title')}</Form.Title>
+        <Form.Header>
+          <Form.Steps currentStep={currentStep} stepCount={stepCount} />
+          <Form.Title>{t('form.standaloneServerForm.title')}</Form.Title>
+        </Form.Header>
 
-        <Box mbe='x24' mbs='x16'>
+        <Box mbe={24} mbs={16}>
           <List>
             <List.Item fontScale='c2' icon='warning' iconColor='warning'>
               {t('form.standaloneServerForm.servicesUnavailable')}

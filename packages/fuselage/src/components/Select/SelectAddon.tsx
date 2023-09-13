@@ -1,9 +1,7 @@
 import type { ComponentProps, Ref } from 'react';
 import React, { forwardRef } from 'react';
 
-import { Box } from '../Box';
-
-export type SelectOptions = readonly [value: string, label: string][];
+import Box from '../Box';
 
 type AddonProps = ComponentProps<typeof Box>;
 

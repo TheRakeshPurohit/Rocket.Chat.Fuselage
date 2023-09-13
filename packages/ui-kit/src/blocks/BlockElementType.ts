@@ -23,11 +23,16 @@ export enum BlockElementType {
   MULTI_CHANNELS_SELECT = 'multi_channels_select',
   MULTI_CONVERSATIONS_SELECT = 'multi_conversations_select',
   MULTI_USERS_SELECT = 'multi_users_select',
+  TOGGLE_SWITCH = 'toggle_switch',
+  RADIO_BUTTON = 'radio_button',
+  CHECKBOX = 'checkbox',
+  TIME_PICKER = 'time_picker',
+  TAB = 'tab',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type AssertEnumKeysFromBlockUnionTypes = {
   [B in BlockElement as Uppercase<
     B['type']
-  >]: typeof BlockElementType[Uppercase<B['type']>];
+  >]: (typeof BlockElementType)[Uppercase<B['type']>];
 };

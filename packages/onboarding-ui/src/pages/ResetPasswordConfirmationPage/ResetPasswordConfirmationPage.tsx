@@ -1,9 +1,7 @@
 import { Box, Margins } from '@rocket.chat/fuselage';
+import { BackgroundLayer, LayoutLogo } from '@rocket.chat/layout';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import BackgroundLayer from '../../common/BackgroundLayer';
-import { OnboardingLogo } from '../../common/OnboardingLogo';
 
 const ResetPasswordConfirmationPage = (): ReactElement => {
   const { t } = useTranslation();
@@ -20,14 +18,9 @@ const ResetPasswordConfirmationPage = (): ReactElement => {
         paddingInline={16}
       >
         <Margins blockEnd={32}>
-          <OnboardingLogo />
+          <LayoutLogo.LayoutLogo />
 
-          <Box
-            fontWeight={800}
-            fontSize='x52'
-            lineHeight='x62'
-            fontFamily='sans'
-          >
+          <Box fontScale='hero'>
             {t('page.resetPasswordPage.emailSent.title')}
           </Box>
 

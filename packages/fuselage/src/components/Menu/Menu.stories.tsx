@@ -24,13 +24,13 @@ const Template: ComponentStory<typeof Menu> = (args) => (
   </Box>
 );
 
-export const simple = Template.bind({});
-simple.args = {
+export const Simple = Template.bind({});
+Simple.args = {
   options: {
     makeAdmin: {
       label: (
         <Box display='flex' alignItems='center'>
-          <Icon mie='x4' name='key' size='x16' />
+          <Icon mie={4} name='key' size='x16' />
           Make Admin
         </Box>
       ),
@@ -39,7 +39,7 @@ simple.args = {
     delete: {
       label: (
         <Box display='flex' alignItems='center' color='danger'>
-          <Icon mie='x4' name='trash' size='x16' />
+          <Icon mie={4} name='trash' size='x16' />
           Delete
         </Box>
       ),
@@ -48,12 +48,17 @@ simple.args = {
   },
 };
 
-export const complex = Template.bind({});
-complex.args = {
+export const Complex = Template.bind({});
+Complex.args = {
   options: {
     example: {
       label: 'Example',
       action: action('example.action'),
+    },
+    disabled: {
+      label: 'Disabled',
+      action: action('disabled.action'),
+      disabled: true,
     },
     divider1: {
       type: 'divider',
@@ -66,7 +71,7 @@ complex.args = {
       type: 'option',
       label: (
         <Box display='flex' alignItems='center' color='danger'>
-          <Icon mie='x4' name='trash' size='x16' />
+          <Icon mie={4} name='trash' size='x16' />
           Delete
         </Box>
       ),

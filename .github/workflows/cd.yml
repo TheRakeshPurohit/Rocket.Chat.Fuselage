@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v2
         with:
-          node-version: "14.17.6"
+          node-version: "14.21.3"
       - uses: actions/checkout@v2
       - name: Turbo Cache
         id: turbo-cache
@@ -44,8 +44,8 @@ jobs:
           name: storybooks
           path: |
             packages/fuselage/storybook-static
-            packages/fuselage-ui-kit/storybook-static
             packages/onboarding-ui/storybook-static
+            packages/layout/storybook-static
       - if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v2
         with:
@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v2
         with:
-          node-version: "14.17.6"
+          node-version: "14.21.3"
           registry-url: "https://registry.npmjs.org"
           scope: "@rocket.chat"
       - uses: actions/checkout@v2
@@ -89,14 +89,20 @@ jobs:
       - run: yarn install
         if: steps.yarn-cache.outputs.cache-hit != 'true'
       - run: yarn resolve-workspace-deps
-      - run: yarn lerna publish from-package --yes --no-verify-access
+        if: github.ref == 'refs/heads/master'
+      - uses: changesets/action@v1
+        with:
+          publish: yarn release
         if: github.ref == 'refs/heads/master'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: yarn lerna publish --no-verify-access --canary --preid dev --dist-tag next --yes
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn bump-next
+        if: github.ref == 'refs/heads/develop'
+      - run: yarn release-next
         if: github.ref == 'refs/heads/develop'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-to-gh-pages:
     name: Publish to GitHub Pages
@@ -120,10 +126,10 @@ jobs:
           name: docs
           path: .
       - run: |
-          rm -rf "fuselage/${{ needs.build-and-test.outputs.branch-name }}" "fuselage-ui-kit/${{ needs.build-and-test.outputs.branch-name }}" "onboarding-ui/${{ needs.build-and-test.outputs.branch-name }}"
+          rm -rf "fuselage/${{ needs.build-and-test.outputs.branch-name }}" "layout/${{ needs.build-and-test.outputs.branch-name }}" "onboarding-ui/${{ needs.build-and-test.outputs.branch-name }}"
           mv -v "packages/fuselage/storybook-static" "fuselage/${{ needs.build-and-test.outputs.branch-name }}"
-          mv -v "packages/fuselage-ui-kit/storybook-static" "fuselage-ui-kit/${{ needs.build-and-test.outputs.branch-name }}"
           mv -v "packages/onboarding-ui/storybook-static" "onboarding-ui/${{ needs.build-and-test.outputs.branch-name }}"
+          mv -v "packages/layout/storybook-static" "layout/${{ needs.build-and-test.outputs.branch-name }}"
           rm -rf packages
       - uses: crazy-max/ghaction-github-pages@v2
         with:

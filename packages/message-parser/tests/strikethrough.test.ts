@@ -1,21 +1,48 @@
-import { parser } from '../src';
-import { strike, paragraph, plain, link } from '../src/utils';
+import { parse } from '../src';
+import {
+  emoji,
+  emojiUnicode,
+  link,
+  mentionChannel,
+  mentionUser,
+  paragraph,
+  plain,
+  strike,
+} from '../src/utils';
 
 test.each([
+  ['~:smile:~', [paragraph([strike([emoji('smile')])])]],
+  [
+    '~test :smile: test~',
+    [paragraph([strike([plain('test '), emoji('smile'), plain(' test')])])],
+  ],
+  ['~😀~', [paragraph([strike([emojiUnicode('😀')])])]],
+  ['~test 😀~', [paragraph([strike([plain('test '), emojiUnicode('😀')])])]],
+  [
+    '~@guilherme.gazzo~',
+    [paragraph([strike([mentionUser('guilherme.gazzo')])])],
+  ],
+  ['~#GENERAL~', [paragraph([strike([mentionChannel('GENERAL')])])]],
+  [
+    '~test @guilherme.gazzo~',
+    [paragraph([strike([plain('test '), mentionUser('guilherme.gazzo')])])],
+  ],
+  [
+    '~test #GENERAL~',
+    [paragraph([strike([plain('test '), mentionChannel('GENERAL')])])],
+  ],
   [
     '~~[A brand new Gist](https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4)~~',
     [
       paragraph([
         strike([
-          link(
-            'https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4',
-            plain('A brand new Gist')
-          ),
+          link('https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4', [
+            plain('A brand new Gist'),
+          ]),
         ]),
       ]),
     ],
   ],
-  ['__test__test__', [paragraph([plain('__test__test__')])]],
   ['~~strike~~', [paragraph([strike([plain('strike')])])]],
   [
     'pre~~strike~~post',
@@ -91,5 +118,5 @@ test.each([
     ],
   ],
 ])('parses %p', (input, output) => {
-  expect(parser(input)).toMatchObject(output);
+  expect(parse(input)).toMatchObject(output);
 });

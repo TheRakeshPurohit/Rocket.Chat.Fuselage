@@ -10,18 +10,17 @@ import {
   CheckBox,
 } from '@rocket.chat/fuselage';
 import { useUniqueId } from '@rocket.chat/fuselage-hooks';
+import { Form } from '@rocket.chat/layout';
 import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import type { SubmitHandler, Validate } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../common/Form';
-
 export type AdminInfoPayload = {
   fullname: string;
   username: string;
-  companyEmail: string;
+  email: string;
   password: string;
   keepPosted?: boolean;
 };
@@ -53,7 +52,7 @@ const AdminInfoForm = ({
 
   const fullnameField = useUniqueId();
   const usernameField = useUniqueId(); // lgtm [js/insecure-randomness]
-  const companyEmailField = useUniqueId();
+  const emailField = useUniqueId();
   const passwordField = useUniqueId(); // lgtm [js/insecure-randomness]
 
   const {
@@ -74,14 +73,16 @@ const AdminInfoForm = ({
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Form.Steps currentStep={currentStep} stepCount={stepCount} />
-      <Form.Title>{t('form.adminInfoForm.title')}</Form.Title>
-      <Form.Subtitle>{t('form.adminInfoForm.subtitle')}</Form.Subtitle>
+      <Form.Header>
+        <Form.Steps currentStep={currentStep} stepCount={stepCount} />
+        <Form.Title>{t('form.adminInfoForm.title')}</Form.Title>
+        <Form.Subtitle>{t('form.adminInfoForm.subtitle')}</Form.Subtitle>
+      </Form.Header>
       <Form.Container>
         <FieldGroup>
           <Field>
             <Field.Label htmlFor={fullnameField}>
-              {t('form.adminInfoForm.fields.fullName.placeholder')}
+              {t('form.adminInfoForm.fields.fullName.label')}
             </Field.Label>
             <Field.Row>
               <TextInput
@@ -119,24 +120,20 @@ const AdminInfoForm = ({
             )}
           </Field>
           <Field>
-            <Field.Label htmlFor={companyEmailField}>
-              {t('form.adminInfoForm.fields.companyEmail.label')}
+            <Field.Label htmlFor={emailField}>
+              {t('form.adminInfoForm.fields.email.label')}
             </Field.Label>
             <Field.Row>
               <EmailInput
-                {...register('companyEmail', {
+                {...register('email', {
                   required: String(t('component.form.requiredField')),
                   validate: validateEmail,
                 })}
-                placeholder={t(
-                  'form.adminInfoForm.fields.companyEmail.placeholder'
-                )}
-                id={companyEmailField}
+                placeholder={t('form.adminInfoForm.fields.email.placeholder')}
+                id={emailField}
               />
             </Field.Row>
-            {errors.companyEmail && (
-              <Field.Error>{errors.companyEmail.message}</Field.Error>
-            )}
+            {errors.email && <Field.Error>{errors.email.message}</Field.Error>}
           </Field>
           <Field>
             <Field.Label htmlFor={passwordField}>
@@ -160,8 +157,8 @@ const AdminInfoForm = ({
             )}
           </Field>
           {keepPosted && (
-            <Box mbe='x8' display='block' color='info' fontScale='c1'>
-              <CheckBox id='keepPosted' mie='x8' {...register('keepPosted')} />
+            <Box mbe={8} display='block' color='info' fontScale='c1'>
+              <CheckBox id='keepPosted' mie={8} {...register('keepPosted')} />
               <label htmlFor='keepPosted'>
                 {t('form.adminInfoForm.fields.keepPosted.label')}
               </label>

@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react';
 import React from 'react';
 
-import { Box } from '../Box';
+import Box from '../Box';
 import Margins from '../Margins';
 import { style } from './Table';
 
@@ -15,15 +15,14 @@ export const TableSelection = ({
   ...props
 }: TableSelectionProps) => (
   <Box
-    color='alternative'
     rcx-table__selection
     display='flex'
     alignItems='center'
     justifyContent='space-between'
     {...props}
-    pi='x24'
+    pi={24}
   >
-    <Box fontScale='p2m' mb='x16' flexShrink={1} style={style}>
+    <Box fontScale='p2m' mb={16} flexShrink={1} style={style}>
       {text}
     </Box>
     {children && (

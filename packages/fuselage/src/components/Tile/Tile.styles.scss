@@ -1,13 +1,18 @@
 @use '../../styles/colors.scss';
 @use '../../styles/lengths.scss';
 @use '../../styles/typography.scss';
+@use '../../styles/functions.scss';
+@use '../../styles/mixins/elevation.scss';
 
 .rcx-tile {
   display: block;
 
-  color: colors.foreground(default);
-  border-radius: lengths.border-radius(2);
-  background-color: colors.surface();
+  color: colors.font(default);
+  border-radius: functions.theme(
+    'tile-border-radius',
+    lengths.border-radius(medium)
+  );
+  background-color: colors.surface(light);
 
   @include typography.use-font-scale(p2);
 
@@ -16,11 +21,10 @@
   }
 
   &--elevation-1 {
-    box-shadow: 0 0 12px 0 colors.neutral(800, 0.1);
+    @include elevation.elevation-level(1);
   }
 
   &--elevation-2 {
-    box-shadow: 0 0 2px 0 colors.neutral(800, 0.08),
-      0 0 12px 0 colors.neutral(800, 0.12);
+    @include elevation.elevation-level(2);
   }
 }

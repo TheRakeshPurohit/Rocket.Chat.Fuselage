@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 import {
   Title,
   Description,
@@ -23,8 +24,8 @@ export default {
           <Title />
           <Description />
           <Primary />
-          <ArgsTable />
           <Stories title={''} />
+          <ArgsTable />
         </>
       ),
     },
@@ -33,56 +34,63 @@ export default {
 
 const Template: ComponentStory<typeof Tag> = (args) => (
   <Box display='inline-flex'>
-    <Tag {...args}>
-      {args.children}
-      john.doe
-    </Tag>
+    <Tag {...args}>{args.children || 'john.doe'}</Tag>
   </Box>
 );
 
-export const Default: ComponentStory<typeof Tag> = Template.bind({});
-Default.args = {
+export const Default = Template.bind({});
+
+export const _Primary = Template.bind({});
+_Primary.args = {
   variant: 'primary',
 };
 
-export const WithPointerCursor: ComponentStory<typeof Tag> = Template.bind({});
-WithPointerCursor.args = {
-  onClick: () => {},
-};
-
-export const Secondary: ComponentStory<typeof Tag> = Template.bind({});
+export const Secondary = Template.bind({});
 Secondary.args = {
   variant: 'secondary',
 };
 
-export const WithIcon: ComponentStory<typeof Tag> = Template.bind({});
-WithIcon.args = {
-  variant: 'secondary',
-  children: <Icon size='x12' mie='x4' name='team-lock' />,
-};
-
-export const PrimaryStory: ComponentStory<typeof Tag> = Template.bind({});
-PrimaryStory.args = {
-  onClick: () => {},
-};
-PrimaryStory.storyName = 'Primary';
-
-export const Danger: ComponentStory<typeof Tag> = Template.bind({});
-Danger.args = {
+export const _Danger = Template.bind({});
+_Danger.args = {
   variant: 'danger',
 };
+export const _SecondaryDanger = Template.bind({});
+_SecondaryDanger.args = {
+  variant: 'secondary-danger',
+};
 
-export const Warning: ComponentStory<typeof Tag> = Template.bind({});
+export const Warning = Template.bind({});
 Warning.args = {
   variant: 'warning',
 };
 
-export const Ghost: ComponentStory<typeof Tag> = Template.bind({});
-Ghost.args = {
-  variant: 'ghost',
+export const Featured = Template.bind({});
+Featured.args = {
+  variant: 'featured',
 };
 
-export const Disabled: ComponentStory<typeof Tag> = Template.bind({});
+export const WithIcon = Template.bind({});
+WithIcon.args = {
+  icon: <Icon size='x12' mie={4} name='team-lock' />,
+  children: 'Team',
+};
+
+export const Disabled = Template.bind({});
 Disabled.args = {
   disabled: true,
+};
+
+export const Clickable = Template.bind({});
+Clickable.args = {
+  onClick: action('click'),
+};
+
+export const Medium = Template.bind({});
+Medium.args = {
+  medium: true,
+};
+
+export const Large = Template.bind({});
+Large.args = {
+  large: true,
 };

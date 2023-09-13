@@ -1,9 +1,9 @@
-import type { ComponentProps, ReactNode } from 'react';
-import React from 'react';
+import type { ComponentProps, ReactNode, Ref } from 'react';
+import React, { forwardRef } from 'react';
 
-import { Box } from '../Box';
-import { Divider } from '../Divider';
+import Box from '../Box';
 import { SidebarAction, SidebarActions } from './SidebarActions';
+import { SidebarDivider } from './SidebarDivider';
 
 const Avatar: { size: 'x24' } = { size: 'x24' };
 
@@ -49,7 +49,7 @@ export const TopBarToolBox = ({
     {...props}
   >
     <TopBarWrapper children={children} />
-    <TopBarDivider />
+    <SidebarDivider />
   </TopBar>
 );
 
@@ -70,7 +70,7 @@ export const TopBarSection = ({
     {...props}
   >
     <TopBarWrapper children={children} />
-    <TopBarDivider />
+    <SidebarDivider />
   </TopBar>
 );
 
@@ -79,18 +79,20 @@ export const TopBarAvatar = Avatar;
 export const TopBarActions = SidebarActions;
 
 type TopBarActionProps = ComponentProps<typeof SidebarAction>;
-export const TopBarAction = (props: TopBarActionProps) => (
-  <SidebarAction ghost {...props} />
-);
 
-export const TopBarDivider = () => <Divider mbs='neg-x2' mbe={0} />;
+export const TopBarAction = forwardRef(function TopBarAction(
+  props: TopBarActionProps,
+  ref: Ref<HTMLElement>
+) {
+  return <SidebarAction ref={ref} {...props} />;
+});
 
 type TopBarTitleProps = {
   children?: ReactNode;
 };
 
 export const TopBarTitle = (props: TopBarTitleProps) => (
-  <Box rcx-sidebar-top-bar__title withTruncatedText {...props} />
+  <Box className='rcx-sidebar-topbar__title' withTruncatedText {...props} />
 );
 
 export default Object.assign(TopBar, {
@@ -100,6 +102,6 @@ export default Object.assign(TopBar, {
   Avatar: TopBarAvatar,
   Actions: TopBarActions,
   Action: TopBarAction,
-  Divider: TopBarDivider,
+  Divider: SidebarDivider,
   Title: TopBarTitle,
 });

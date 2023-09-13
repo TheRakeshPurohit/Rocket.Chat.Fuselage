@@ -2,9 +2,10 @@
 
 const path = require('path');
 
-const CopyPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const WrapperPlugin = require('wrapper-webpack-plugin');
 
 const pkg = require('./package.json');
 
@@ -42,23 +43,24 @@ module.exports = (env, { mode = 'production' }) => ({
         use: {
           loader: 'ts-loader',
           options: {
-            configFile: path.resolve(__dirname, './tsconfig-bundle.json'),
+            configFile: path.resolve(__dirname, './tsconfig.build.json'),
           },
         },
       },
       {
         test: /\.scss$/,
         use: [
+          MiniCssExtractPlugin.loader,
           'babel-loader',
-          {
-            loader: 'style-loader',
-            options: {
-              attributes: {
-                id: 'fuselage-style',
-              },
-              injectType: 'lazySingletonStyleTag',
-            },
-          },
+          // {
+          //   loader: 'style-loader',
+          //   options: {
+          //     attributes: {
+          //       id: 'fuselage-style',
+          //     },
+          //     injectType: 'lazySingletonStyleTag',
+          //   },
+          // },
           {
             loader: 'css-loader',
             options: {
@@ -97,28 +99,43 @@ module.exports = (env, { mode = 'production' }) => ({
         root: 'React',
       },
     },
+    'react-virtuoso',
     'react-dom',
     '@rocket.chat/icons',
     '@rocket.chat/fuselage-hooks',
+    'react-aria',
+    'react-stately',
+    '@rocket.chat/css-in-js',
+    '@rocket.chat/css-supports',
+    '@rocket.chat/fuselage-tokens',
+    '@rocket.chat/memo',
+    '@rocket.chat/styled',
   ],
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        {
-          context: 'src/',
-          from: '**/!(scss).d.ts',
-          to: '../dist',
-        },
-      ],
-    }),
+    new MiniCssExtractPlugin(),
     new webpack.DefinePlugin({
       'process.env.VERSION': JSON.stringify(pkg.version),
     }),
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       generateStatsFile: false,
-      reportFilename: '../bundle-report.html',
+      reportFilename:
+        mode !== 'production'
+          ? '../bundle-report-dev.html'
+          : '../bundle-report.html',
       openAnalyzer: false,
     }),
-  ],
+
+    mode !== 'production' &&
+      new WrapperPlugin({
+        test: /development\.js$/, // only wrap output of bundle files with '.js' extension
+        header: `'use strict';
+
+if (process.env.NODE_ENV !== "production") {
+(function() {
+`,
+        footer: `\n})();
+}`,
+      }),
+  ].filter(Boolean),
 });

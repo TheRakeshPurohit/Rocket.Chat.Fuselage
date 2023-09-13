@@ -1,11 +1,43 @@
 @use 'sass:map';
+@use '../../styles/functions';
 @use '../../styles/colors.scss';
+@use '../../styles/lengths.scss';
 @use '../../styles/typography.scss';
+@use '../../styles/mixins/elevation.scss';
 
-@mixin -variant($colors) {
-  color: map.get($colors, color);
-  background-color: map.get($colors, background-color);
-}
+// neutral
+$banner-colors-neutral-color: functions.theme(
+  'banner-colors-neutral-color',
+  colors.font(default)
+);
+$banner-colors-neutral-background-color: functions.theme(
+  'banner-colors-neutral-background-color',
+  colors.surface(tint)
+);
+
+// info
+$banner-colors-info-color: functions.theme(
+  'banner-colors-info-color',
+  colors.status-font(on-info)
+);
+
+// success
+$banner-colors-success-color: functions.theme(
+  'banner-colors-success-color',
+  colors.status-font(on-success)
+);
+
+// warning
+$banner-colors-warning-color: functions.theme(
+  'banner-colors-warning-color',
+  colors.status-font(on-warning)
+);
+
+// danger
+$banner-colors-danger-color: functions.theme(
+  'banner-colors-danger-color',
+  colors.status-font(on-danger)
+);
 
 .rcx-banner {
   display: flex;
@@ -18,6 +50,13 @@
 
   padding-block: 14px;
   padding-inline: 16px;
+
+  color: $banner-colors-neutral-color;
+  border-top-width: lengths.border-width(4);
+  border-top-style: solid;
+  border-bottom: lengths.border-width(default) solid colors.stroke(extra-light);
+
+  background-color: $banner-colors-neutral-background-color;
 
   font-family: typography.font-family('sans');
   -webkit-font-smoothing: antialiased;
@@ -32,53 +71,44 @@
   }
 
   &--neutral {
-    @include -variant(
-      (
-        background-color: colors.neutral(100),
-        color: colors.neutral(800),
-      )
-    );
+    border-top-color: transparent;
   }
 
   &--info {
-    @include -variant(
-      (
-        background-color: colors.info(200),
-        color: colors.info(600),
-      )
-    );
-  }
-
-  &--success {
-    @include -variant(
-      (
-        background-color: colors.success(200),
-        color: colors.success(800),
-      )
-    );
+    border-top-color: $banner-colors-info-color;
   }
 
   &--warning {
-    @include -variant(
-      (
-        background-color: colors.warning(200),
-        color: colors.warning(900),
-      )
-    );
+    border-top-color: $banner-colors-warning-color;
   }
 
   &--danger {
-    @include -variant(
-      (
-        background-color: colors.danger(200),
-        color: colors.danger(600),
-      )
-    );
+    border-top-color: $banner-colors-danger-color;
+  }
+
+  &--success {
+    border-top-color: $banner-colors-success-color;
   }
 
   &__icon {
     padding-block: 8px;
     padding-inline-end: 12px;
+
+    &--info {
+      color: $banner-colors-info-color;
+    }
+
+    &--warning {
+      color: $banner-colors-warning-color;
+    }
+
+    &--danger {
+      color: $banner-colors-danger-color;
+    }
+
+    &--success {
+      color: $banner-colors-success-color;
+    }
 
     &--inline {
       margin-block: -2px;
@@ -117,5 +147,13 @@
       margin-block: -4px;
       padding-block: 0;
     }
+  }
+
+  &__link {
+    padding-left: 10px;
+
+    text-decoration: underline;
+
+    color: inherit;
   }
 }

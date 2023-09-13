@@ -1,6 +1,7 @@
 @use '../../styles/lengths.scss';
 @use '../../styles/functions.scss';
 @use '../../styles/colors.scss';
+@use '../../styles/mixins/size.scss';
 @use '../../styles/typography.scss';
 @use './mixins.scss';
 
@@ -11,6 +12,7 @@
 @import './MessageDivider/MessageDivider.styles.scss';
 @import './MessageStatusIndicator/MessageStatusIndicator.styles.scss';
 @import './MessageSystem/MessageSystem.styles.scss';
+@import './MessageGenericPreview/MessageGenericPreview.styles.scss';
 
 %rcx-margins-header {
   margin-inline: lengths.margin(2);
@@ -21,12 +23,66 @@
 
 $message-background-color: functions.theme(
   'message-background-color',
-  colors.foreground(alternative)
+  colors.surface(room)
 );
 
 $message-background-color-focus: functions.theme(
   'message-background-color-focus',
-  colors.neutral(100)
+  colors.surface(hover)
+);
+
+$message-background-color-selected: functions.theme(
+  'message-background-color-selected',
+  colors.status-background(success)
+);
+
+$message-background-color-editing: functions.theme(
+  'message-background-color-editing',
+  colors.status-background(warning-2)
+);
+$message-color-editing: functions.theme(
+  'message-background-color-editing',
+  colors.status-font(on-warning-2)
+);
+
+$message-background-color-highlight: functions.theme(
+  'message-background-color-highlight',
+  colors.status-background(warning-2)
+);
+
+$message-link-color: functions.theme('message-link-color', colors.font(info));
+
+$message-highlight-colors-critical-color: theme(
+  'message-highlight-colors-critical-color',
+  colors.font(pure-white)
+);
+$message-highlight-colors-background-critical-color: theme(
+  'message-highlight-colors-background-critical-color',
+  colors.badge('level-4')
+);
+
+$message-highlight-colors-relevant-color: theme(
+  'message-highlight-colors-relevant-color',
+  colors.font(pure-white)
+);
+$message-highlight-colors-background-relevant-color: theme(
+  'message-highlight-colors-background-relevant-color',
+  colors.badge('level-3')
+);
+
+$message-highlight-colors-other-color: theme(
+  'message-highlight-colors-other-color',
+  colors.font(default)
+);
+
+$message-highlight-colors-other-link-color: theme(
+  'message-highlight-colors-other-color',
+  colors.font(info)
+);
+
+$message-highlight-colors-background-other-color: theme(
+  'message-highlight-colors-background-other-color',
+  colors.badge('level-0')
 );
 
 .rcx-message {
@@ -37,15 +93,59 @@ $message-background-color-focus: functions.theme(
   flex-direction: row;
   align-items: flex-start;
 
-  padding-block: lengths.padding(8);
+  padding-block-start: lengths.padding(8);
+  padding-block-end: lengths.padding(4);
 
   padding-inline: lengths.padding(20);
 
-  background-color: $message-background-color;
+  // background-color: $message-background-color;
 
   &:hover,
   &:focus {
     background: $message-background-color-focus;
+  }
+
+  &--selected {
+    background: $message-background-color-selected !important;
+
+    .rcx-message-header__name,
+    .rcx-message-header__time,
+    .rcx-message-body {
+      color: colors.font(pure-black);
+    }
+  }
+
+  &--editing {
+    color: $message-color-editing !important;
+    background: $message-background-color-editing !important;
+  }
+
+  &--highlight {
+    animation: background-fade 6s forwards;
+  }
+
+  &--pending {
+    .rcx-message-body {
+      opacity: 0.4;
+    }
+  }
+
+  &--sequential {
+    padding-block: lengths.padding(4);
+  }
+
+  @keyframes background-fade {
+    50% {
+      background: $message-background-color-highlight;
+    }
+
+    100% {
+      background: $message-background-color;
+    }
+  }
+
+  &--clickable {
+    cursor: pointer;
   }
 
   &-header {
@@ -61,7 +161,7 @@ $message-background-color-focus: functions.theme(
       @include typography.use-with-truncated-text();
       display: flex;
       flex-direction: row;
-      align-items: baseline;
+      align-items: center;
       flex-grow: 1;
       flex-shrink: 1;
 
@@ -76,25 +176,29 @@ $message-background-color-focus: functions.theme(
       @include typography.use-font-scale(c1);
       flex-shrink: 0;
 
-      color: colors.neutral(600);
+      color: colors.font(default);
+    }
+
+    &__name-container {
+      @extend %rcx-margins-header;
+
+      display: inline;
     }
 
     &__name {
-      @extend %rcx-margins-header;
       @include typography.use-font-scale(h5);
       @include typography.use-with-truncated-text();
       flex-shrink: 1;
 
-      color: colors.foreground(default);
+      color: colors.font(default);
     }
 
     &__username {
-      @extend %rcx-margins-header;
-      @include typography.use-font-scale(p2m);
+      @include typography.use-font-scale(p2);
       @include typography.use-with-truncated-text();
       flex-shrink: 1;
 
-      color: colors.foreground(hint);
+      color: colors.font(default);
     }
 
     &__roles {
@@ -114,7 +218,59 @@ $message-background-color-focus: functions.theme(
 
     flex-shrink: 1;
 
-    color: colors.neutral(800);
+    transition: opacity 0.3s linear;
+
+    word-break: break-word;
+
+    opacity: 1;
+
+    color: colors.font(default);
+
+    & a {
+      color: $message-link-color;
+    }
+
+    & h1 {
+      @include typography.use-font-scale(h1);
+    }
+
+    & h2 {
+      @include typography.use-font-scale(h2);
+    }
+
+    & h3 {
+      @include typography.use-font-scale(h3);
+    }
+
+    & h4 {
+      @include typography.use-font-scale(h4);
+    }
+
+    & ul,
+    ol {
+      margin: 0;
+      padding-block-start: lengths.padding(4);
+      padding-block-end: 0;
+      padding-inline: 0;
+
+      list-style: none;
+    }
+
+    & ul li::before {
+      padding: 0 lengths.padding(8);
+
+      content: '•';
+
+      font-weight: bold;
+    }
+
+    & ol li::before {
+      padding: 0 lengths.padding(8);
+
+      content: attr(value) '.';
+
+      font-weight: bold;
+    }
 
     &--clamp {
       display: -webkit-box;
@@ -142,5 +298,97 @@ $message-background-color-focus: functions.theme(
     @extend %rcx-margins-block;
     display: flex;
     flex-direction: column;
+
+    &--width-fixed {
+      flex-grow: 0;
+      flex-shrink: 1;
+
+      width: 100;
+      max-width: functions.theme('message-block-width-fixed', 368px);
+    }
+  }
+
+  &__emoji {
+    display: inline-block;
+
+    margin-inline: lengths.margin(2);
+
+    background-size: contain;
+    @include size.square(lengths.size(24));
+
+    &--big {
+      @include size.square(lengths.size(44));
+    }
+  }
+
+  &__highlight {
+    position: relative;
+
+    z-index: 1;
+
+    display: inline-block;
+
+    padding-inline: lengths.padding(2);
+
+    white-space: nowrap;
+
+    word-break: keep-all;
+
+    font-weight: 500;
+
+    &--clickable {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &::before {
+      position: absolute;
+
+      z-index: -1;
+
+      width: 100%;
+      height: 18px;
+
+      content: '';
+
+      transform: translateY(lengths.margin(1)) translateX(lengths.margin(-2));
+
+      border-radius: theme(
+        'message-highlight-border-radius',
+        lengths.border-radius(medium)
+      );
+    }
+
+    &--critical {
+      &::before {
+        background-color: $message-highlight-colors-background-critical-color;
+      }
+      color: $message-highlight-colors-critical-color;
+    }
+
+    &--relevant {
+      &::before {
+        background-color: $message-highlight-colors-background-relevant-color;
+      }
+      color: $message-highlight-colors-relevant-color;
+    }
+
+    &--other,
+    &--link {
+      &::before {
+        background-color: $message-highlight-colors-background-other-color;
+      }
+    }
+
+    &--link {
+      color: $message-highlight-colors-other-link-color;
+    }
+
+    &--other {
+      color: $message-highlight-colors-other-color;
+    }
   }
 }

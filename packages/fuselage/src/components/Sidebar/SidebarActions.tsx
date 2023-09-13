@@ -1,17 +1,20 @@
-import type { ComponentProps } from 'react';
-import React from 'react';
+import type { ComponentProps, Ref } from 'react';
+import React, { forwardRef } from 'react';
 
-import { ActionButton } from '..';
+import { IconButton } from '../Button';
 import { ButtonGroup } from '../ButtonGroup';
 
 type SidebarActionsProps = ComponentProps<typeof ButtonGroup>;
 
 export const SidebarActions = (props: SidebarActionsProps) => (
-  <ButtonGroup mb='neg-x2' medium {...props} />
+  <ButtonGroup {...props} />
 );
 
-type SidebarActionProps = ComponentProps<typeof ActionButton>;
+type SidebarActionProps = ComponentProps<typeof IconButton>;
 
-export const SidebarAction = (props: SidebarActionProps) => (
-  <ActionButton small {...props} />
-);
+export const SidebarAction = forwardRef(function SidebarAction(
+  props: SidebarActionProps,
+  ref: Ref<HTMLElement>
+) {
+  return <IconButton small ref={ref} {...props} />;
+});

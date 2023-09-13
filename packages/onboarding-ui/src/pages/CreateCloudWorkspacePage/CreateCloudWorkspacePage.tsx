@@ -1,33 +1,16 @@
-import type { SelectOption } from '@rocket.chat/fuselage';
 import { Box } from '@rocket.chat/fuselage';
-import type { ReactElement } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
+import { BackgroundLayer } from '@rocket.chat/layout';
+import type { ComponentProps, ReactElement } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
-import BackgroundLayer from '../../common/BackgroundLayer';
 import FormPageLayout from '../../common/FormPageLayout';
 import CreateCloudWorkspaceForm from '../../forms/CreateCloudWorkspaceForm';
 import Description from './Description';
 import TitleCreateCloudPage from './TitleCreateCloudPage';
 
-type CreateCloudWorkspacePageProps = {
-  currentStep: number;
-  stepCount: number;
-  onSubmit: SubmitHandler<{
-    organizationName: string;
-    organizationEmail: string;
-    workspaceName: string;
-    workspaceURL: string;
-    serverRegion: string;
-    agreement: boolean;
-    updates: boolean;
-  }>;
-  domain: string;
-  serverRegionOptions: SelectOption[];
-  onBackButtonClick: () => void;
-  validateUrl: (url: string) => Promise<boolean>;
-  validateEmail: (url: string) => Promise<boolean>;
-};
+type CreateCloudWorkspacePageProps = ComponentProps<
+  typeof CreateCloudWorkspaceForm
+>;
 
 const CreateCloudWorkspacePage = (
   props: CreateCloudWorkspacePageProps
@@ -39,10 +22,11 @@ const CreateCloudWorkspacePage = (
       <FormPageLayout
         title={<TitleCreateCloudPage />}
         description={<Description />}
-        subtitle={t('page.cloudDescription.tryGold')}
+        subtitle={t('page.createCloudWorkspace.tryGold')}
       >
         <CreateCloudWorkspaceForm {...props} />
-        <Box mbs='x28' display='inline' textAlign='center'>
+
+        <Box mbs={28} display='inline' textAlign='center'>
           <Trans i18nKey='page.alreadyHaveAccount'>
             Already have an account?
             <Box

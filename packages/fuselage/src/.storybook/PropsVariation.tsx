@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { Box } from '../components/Box';
+import Box from '../components/Box';
 
 function PropsVariation({
   component: Component,
@@ -9,13 +9,13 @@ function PropsVariation({
 }: {
   component: ComponentType;
   common?: Record<string, unknown>;
-  xAxis?: Record<string, unknown>;
-  yAxis?: Record<string, unknown>;
+  xAxis?: Record<string, Record<string, unknown>>;
+  yAxis?: Record<string, Record<string, unknown>>;
 }) {
   return (
     <Box
       is='table'
-      marginBlock='x16'
+      marginBlock={16}
       marginInline='auto'
       style={{ borderCollapse: 'collapse' }}
     >
@@ -40,8 +40,8 @@ function PropsVariation({
                 key={x}
                 is='td'
                 margin='none'
-                paddingBlock='x8'
-                paddingInline='x16'
+                paddingBlock={8}
+                paddingInline={16}
               >
                 <Box display='flex' alignItems='center' justifyContent='center'>
                   <Component {...common} {...xProps} {...yProps} />

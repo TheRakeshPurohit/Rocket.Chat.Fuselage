@@ -5,46 +5,50 @@ import {
   ButtonGroup,
   Button,
   Box,
+  Divider,
+  EmailInput,
   TextInput,
   Select,
   CheckBox,
+  Grid,
 } from '@rocket.chat/fuselage';
-import type { ReactElement } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
+import { Form } from '@rocket.chat/layout';
+import type { ReactElement, FocusEvent } from 'react';
+import type { SubmitHandler, Validate } from 'react-hook-form';
 import { useForm, Controller } from 'react-hook-form';
 import { useTranslation, Trans } from 'react-i18next';
 
-import Form from '../../common/Form';
 import Tooltip from '../../common/InformationTooltipTrigger';
 import WorkspaceUrlInput from './WorkspaceUrlInput';
 
 type CreateCloudWorkspaceFormPayload = {
-  organizationName: string;
   organizationEmail: string;
   workspaceName: string;
   workspaceURL: string;
   serverRegion: string;
+  language: string;
   agreement: boolean;
   updates: boolean;
 };
 
 type CreateCloudWorkspaceFormProps = {
-  currentStep: number;
-  stepCount: number;
+  defaultValues?: CreateCloudWorkspaceFormPayload;
   onSubmit: SubmitHandler<CreateCloudWorkspaceFormPayload>;
   serverRegionOptions: SelectOption[];
+  languageOptions: SelectOption[];
   domain: string;
-  onBackButtonClick: () => void;
-  validateUrl: (url: string) => Promise<boolean>;
-  validateEmail: (url: string) => Promise<boolean>;
+  onBackButtonClick?: () => void;
+  validateUrl: Validate<string>;
+  validateEmail: Validate<string>;
 };
 
 const CreateCloudWorkspaceForm = ({
+  defaultValues,
   onSubmit,
   domain,
-  currentStep,
-  stepCount,
   serverRegionOptions,
+  languageOptions,
+  onBackButtonClick,
   validateUrl,
   validateEmail,
 }: CreateCloudWorkspaceFormProps): ReactElement => {
@@ -54,81 +58,66 @@ const CreateCloudWorkspaceForm = ({
     register,
     control,
     handleSubmit,
-    formState: { isDirty, isValidating, isSubmitting, errors },
-  } = useForm<CreateCloudWorkspaceFormPayload, object>();
+    setValue,
+    formState: { isValid, isValidating, isSubmitting, errors },
+  } = useForm<CreateCloudWorkspaceFormPayload>({ mode: 'onChange' });
+
+  const onNameBlur = (e: FocusEvent<HTMLInputElement>) => {
+    const fieldValue = e.target.value;
+    const workspaceURL = fieldValue.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase();
+    setValue('workspaceURL', workspaceURL, { shouldValidate: true });
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Form.Steps currentStep={currentStep} stepCount={stepCount} />
-      <Form.Title>{t('form.createCloudWorkspace.title')}</Form.Title>
-      <FieldGroup mbs='x16'>
-        <Field>
-          <Field.Label>
-            {t('form.createCloudWorkspace.fields.orgName')}
-          </Field.Label>
-          <Field.Row>
-            <TextInput
-              {...register('organizationName', { required: true })}
-              placeholder={t('form.createCloudWorkspace.fields.orgName')}
-            />
-          </Field.Row>
-          {errors.organizationName && (
-            <Field.Error>{t('component.form.requiredField')}</Field.Error>
-          )}
-        </Field>
+      <Form.Header>
+        <Form.Title>{t('form.createCloudWorkspace.title')}</Form.Title>
+      </Form.Header>
+
+      <FieldGroup mbs={16}>
         <Field>
           <Field.Label>
             {t('form.createCloudWorkspace.fields.orgEmail.label')}
           </Field.Label>
           <Field.Row>
-            <TextInput
+            <EmailInput
               {...register('organizationEmail', {
                 required: true,
                 validate: validateEmail,
               })}
-              placeholder={t(
-                'form.createCloudWorkspace.fields.orgEmail.placeholder'
-              )}
+              defaultValue={defaultValues?.organizationEmail}
+              error={errors?.organizationEmail?.type || undefined}
             />
           </Field.Row>
-          {errors.organizationEmail?.type === 'required' && (
-            <Field.Error>{t('component.form.requiredField')}</Field.Error>
-          )}
-          {errors.organizationEmail?.type === 'validate' && (
-            <Field.Error>
-              {t('form.createCloudWorkspace.fields.orgEmail.invalid')}
-            </Field.Error>
+          {errors?.organizationEmail && (
+            <Field.Error>{errors.organizationEmail.message}</Field.Error>
           )}
         </Field>
+
         <Field>
           <Field.Label>
-            <Box display='inline' mie='x8'>
+            <Box display='inline' mie={8}>
               {t('form.createCloudWorkspace.fields.workspaceName.label')}
             </Box>
-            <Tooltip
-              text={t('form.createCloudWorkspace.fields.workspaceName.tooltip')}
-            />
           </Field.Label>
           <Field.Row>
             <TextInput
               {...register('workspaceName', { required: true })}
-              placeholder={t(
-                'form.createCloudWorkspace.fields.workspaceName.label'
-              )}
+              defaultValue={defaultValues?.workspaceName}
+              error={errors?.workspaceName?.type || undefined}
+              onBlur={onNameBlur}
             />
           </Field.Row>
           {errors.workspaceName && (
             <Field.Error>{t('component.form.requiredField')}</Field.Error>
           )}
         </Field>
+
         <Field>
           <Field.Label>
-            <Box display='inline' mie='x8'>
+            <Box display='inline' mie={8}>
               {t('form.createCloudWorkspace.fields.workspaceUrl.label')}
             </Box>
-            <Tooltip
-              text={t('form.createCloudWorkspace.fields.workspaceUrl.tooltip')}
-            />
           </Field.Label>
           <Field.Row>
             <WorkspaceUrlInput
@@ -137,48 +126,83 @@ const CreateCloudWorkspaceForm = ({
                 required: true,
                 validate: validateUrl,
               })}
-              placeholder={t(
-                'form.createCloudWorkspace.fields.workspaceUrl.placeholder'
-              )}
+              defaultValue={defaultValues?.workspaceURL}
             />
           </Field.Row>
-          {errors.workspaceURL?.type === 'required' && (
-            <Field.Error>{t('component.form.requiredField')}</Field.Error>
-          )}
-          {errors.workspaceURL?.type === 'validate' && (
-            <Field.Error>
-              {t('form.createCloudWorkspace.fields.workspaceUrl.exists')}
-            </Field.Error>
+          {errors?.workspaceURL && (
+            <Field.Error>{errors.workspaceURL.message}</Field.Error>
           )}
         </Field>
-        <Field>
-          <Field.Label>
-            <Box display='inline' mie='x8'>
-              {t('form.createCloudWorkspace.fields.serverRegion.label')}
-            </Box>
-            <Tooltip
-              text={t('form.createCloudWorkspace.fields.serverRegion.tooltip')}
-            />
-          </Field.Label>
-          <Field.Row>
-            <Controller
-              name='serverRegion'
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  options={serverRegionOptions}
-                  placeholder={t(
-                    'form.createCloudWorkspace.fields.serverRegion.label'
+
+        <Grid mb={16}>
+          <Grid.Item>
+            <Field>
+              <Field.Label>
+                <Box display='inline' mie={8}>
+                  {t('form.createCloudWorkspace.fields.serverRegion.label')}
+                </Box>
+                <Tooltip
+                  text={t(
+                    'form.createCloudWorkspace.fields.serverRegion.tooltip'
                   )}
                 />
-              )}
-            />
-          </Field.Row>
-        </Field>
+              </Field.Label>
+              <Field.Row>
+                <Controller
+                  name='serverRegion'
+                  control={control}
+                  rules={{ required: true }}
+                  defaultValue={defaultValues?.serverRegion}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={serverRegionOptions}
+                      placeholder={t(
+                        'form.createCloudWorkspace.fields.serverRegion.label'
+                      )}
+                    />
+                  )}
+                />
+              </Field.Row>
+            </Field>
+          </Grid.Item>
+
+          <Grid.Item>
+            <Field>
+              <Field.Label>
+                <Box display='inline' mie={8}>
+                  {t('form.createCloudWorkspace.fields.language.label')}
+                </Box>
+                <Tooltip
+                  text={t('form.createCloudWorkspace.fields.language.tooltip')}
+                />
+              </Field.Label>
+              <Field.Row>
+                <Controller
+                  name='language'
+                  control={control}
+                  rules={{ required: true }}
+                  defaultValue={defaultValues?.language}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={languageOptions}
+                      placeholder={t(
+                        'form.createCloudWorkspace.fields.language.label'
+                      )}
+                    />
+                  )}
+                />
+              </Field.Row>
+            </Field>
+          </Grid.Item>
+        </Grid>
+
+        <Divider mb={0} />
+
         <Field>
           <Field.Row justifyContent='flex-start'>
-            <CheckBox {...register('agreement', { required: true })} mie='x8' />
+            <CheckBox {...register('agreement', { required: true })} mie={8} />
             <Box is='label' htmlFor='agreement' withRichContent fontScale='c1'>
               <Trans i18nKey='component.form.termsAndConditions'>
                 I agree with
@@ -191,7 +215,7 @@ const CreateCloudWorkspaceForm = ({
                 </a>
                 and
                 <a
-                  href='https://rocket.chat/policy'
+                  href='https://rocket.chat/privacy'
                   target='_blank'
                   rel='noopener noreferrer'
                 >
@@ -204,21 +228,29 @@ const CreateCloudWorkspaceForm = ({
             <Field.Error>{t('component.form.requiredField')}</Field.Error>
           )}
         </Field>
+
         <Field>
           <Field.Row justifyContent='flex-start'>
-            <CheckBox {...register('updates')} mie='x8' />
+            <CheckBox {...register('updates')} mie={8} />
             <Box fontScale='c1'>
-              {t('form.createCloudWorkspace.fields.keepMePosted')}
+              {t('form.createCloudWorkspace.fields.keepMeInformed')}
             </Box>
           </Field.Row>
         </Field>
       </FieldGroup>
+
       <Form.Footer>
         <ButtonGroup>
+          {onBackButtonClick && (
+            <Button disabled={isSubmitting} onClick={onBackButtonClick}>
+              {t('component.form.action.back')}
+            </Button>
+          )}
+
           <Button
             type='submit'
             primary
-            disabled={!isDirty || isValidating || isSubmitting}
+            disabled={isValidating || isSubmitting || !isValid}
           >
             {t('component.form.action.next')}
           </Button>

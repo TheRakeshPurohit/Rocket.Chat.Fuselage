@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactElement } from 'react';
 import React from 'react';
 
-import { Box } from '../Box';
+import Box from '../Box';
 import { Button } from '../Button';
 import { Skeleton } from '../Skeleton';
 
@@ -20,7 +20,7 @@ const CodeSnippet = ({
   if (!children) {
     return (
       <Box is='pre' rcx-code-snippet {...props}>
-        <Skeleton w='100%' />
+        <Skeleton w='100%' aria-hidden aria-busy />
       </Box>
     );
   }

@@ -2,7 +2,7 @@ import { useToggle, useUniqueId } from '@rocket.chat/fuselage-hooks';
 import type { FormEvent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import React from 'react';
 
-import { Box } from '../Box';
+import Box from '../Box';
 import { Chevron } from '../Chevron';
 import { ToggleSwitch } from '../ToggleSwitch';
 
@@ -96,12 +96,13 @@ export const AccordionItem = function Item({
     <Box is='section' rcx-accordion-item className={className} {...props}>
       {title && (
         <Box
+          role='button'
           animated
           rcx-accordion-item__bar
           rcx-accordion-item__bar--disabled={disabled}
           {...barProps}
         >
-          <Box is='h1' rcx-accordion-item__title id={titleId}>
+          <Box is='h2' rcx-accordion-item__title id={titleId}>
             {title}
           </Box>
           {!noncollapsible && (
@@ -125,7 +126,6 @@ export const AccordionItem = function Item({
         rcx-accordion-item__panel
         rcx-accordion-item__panel--expanded={panelExpanded}
         id={panelId}
-        role='region'
       >
         {children}
       </Box>

@@ -1,28 +1,32 @@
-import type { ComponentProps, Dispatch, SetStateAction } from 'react';
-import React, { useState } from 'react';
+import type { ComponentProps, Dispatch, Ref, SetStateAction } from 'react';
+import React, { forwardRef, useState } from 'react';
 
-import { Select } from '.';
+import { SelectLegacy } from '.';
 import type { Icon } from '..';
 import type { SelectAnchorParams } from './SelectAnchorParams';
 import SelectFilteredAnchor from './SelectFilteredAnchor';
 
-export type SelectFilteredProps = ComponentProps<typeof Select> & {
+export type SelectFilteredProps = ComponentProps<typeof SelectLegacy> & {
   filter?: string;
   setFilter?: Dispatch<SetStateAction<string>>;
   addonIcon?: ComponentProps<typeof Icon>['name'];
 };
 
-export const SelectFiltered = ({
-  options,
-  placeholder,
-  filter: propFilter,
-  setFilter: propSetFilter,
-  ...props
-}: SelectFilteredProps) => {
+export const SelectFiltered = forwardRef(function SelectFiltered(
+  {
+    options,
+    placeholder,
+    filter: propFilter,
+    setFilter: propSetFilter,
+    ...props
+  }: SelectFilteredProps,
+  ref: Ref<HTMLInputElement>
+) {
   const [filter, setFilter] = useState('');
 
   return (
-    <Select
+    <SelectLegacy
+      ref={ref}
       placeholder={placeholder}
       filter={propFilter || filter}
       options={options}
@@ -37,4 +41,4 @@ export const SelectFiltered = ({
       )}
     />
   );
-};
+});

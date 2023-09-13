@@ -1,4 +1,4 @@
-import { parser } from '../src';
+import { parse } from '../src';
 import {
   italic,
   paragraph,
@@ -8,24 +8,63 @@ import {
   emoji,
   link,
   bigEmoji,
+  emojiUnicode,
+  mentionChannel,
+  mentionUser,
 } from '../src/utils';
 
 test.each([
+  ['_:smile:_', [paragraph([italic([emoji('smile')])])]],
+  ['_:slight_smile:_', [paragraph([italic([emoji('slight_smile')])])]],
+  [
+    '_test :smile: test_',
+    [paragraph([italic([plain('test '), emoji('smile'), plain(' test')])])],
+  ],
+  [
+    '_test :slight_smile: test_',
+    [
+      paragraph([
+        italic([plain('test '), emoji('slight_smile'), plain(' test')]),
+      ]),
+    ],
+  ],
+  ['_😀_', [paragraph([italic([emojiUnicode('😀')])])]],
+  ['_test 😀_', [paragraph([italic([plain('test '), emojiUnicode('😀')])])]],
+  [
+    '_test @guilherme.gazzo test_',
+    [
+      paragraph([
+        italic([
+          plain('test '),
+          mentionUser('guilherme.gazzo'),
+          plain(' test'),
+        ]),
+      ]),
+    ],
+  ],
+  [
+    '_test #GENERAL test_',
+    [
+      paragraph([
+        italic([plain('test '), mentionChannel('GENERAL'), plain(' test')]),
+      ]),
+    ],
+  ],
   [
     '_[A brand new Gist](https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4)_',
     [
       paragraph([
         italic([
-          link(
-            'https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4',
-            plain('A brand new Gist')
-          ),
+          link('https://gist.github.com/24dddfa97bef58f46ac2ce0f80c58ba4', [
+            plain('A brand new Gist'),
+          ]),
         ]),
       ]),
     ],
   ],
   ['__italic__', [paragraph([italic([plain('italic')])])]],
   ['__italic__non', [paragraph([plain('__italic__non')])]],
+  ['__test__test__', [paragraph([plain('__test__test__')])]],
   ['pre__italic__post', [paragraph([plain('pre__italic__post')])]],
   [' pre__italic__post', [paragraph([plain(' pre__italic__post')])]],
   [
@@ -98,5 +137,5 @@ test.each([
   ['_hello_text', [paragraph([plain('_hello_text')])]],
   ['text_hello_', [paragraph([plain('text_hello_')])]],
 ])('parses %p', (input, output) => {
-  expect(parser(input)).toMatchObject(output);
+  expect(parse(input)).toMatchObject(output);
 });

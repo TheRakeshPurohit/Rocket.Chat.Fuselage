@@ -6,6 +6,7 @@ import { Box, Avatar } from '../..';
 import { MessageDivider } from '../MessageDivider';
 import MessageReactions from '../MessageReactions';
 import MessageToolbox from '../MessageToolbox';
+import { MessageStatusIndicatorText } from './MessageStatusIndicatorText';
 
 export default {
   title: 'Message/MessageStatusIndicator',
@@ -37,8 +38,10 @@ export const Default = () => (
       </Message.LeftContainer>
       <Message.Container>
         <Message.Header>
-          <Message.Name>Haylie George</Message.Name>
-          <Message.Username>@haylie.george</Message.Username>
+          <Message.NameContainer>
+            <Message.Name>Haylie George</Message.Name>{' '}
+            <Message.Username>@haylie.george</Message.Username>
+          </Message.NameContainer>
           <Message.Role>Admin</Message.Role>
           <Message.Role>User</Message.Role>
           <Message.Role>Owner</Message.Role>
@@ -88,6 +91,27 @@ export const Default = () => (
             name='star-filled'
             data-title={'starred'}
           />
+        </MessageStatusIndicator>
+      </Message.LeftContainer>
+      <Message.Container>
+        <Message.Body>
+          Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+        </Message.Body>
+      </Message.Container>
+      <MessageToolbox.Wrapper>
+        <MessageToolbox>
+          <MessageToolbox.Item icon='quote' />
+          <MessageToolbox.Item icon='clock' />
+          <MessageToolbox.Item icon='thread' />
+        </MessageToolbox>
+      </MessageToolbox.Wrapper>
+    </Message>
+    <Message className='customclass' clickable sequential>
+      <Message.LeftContainer>
+        <MessageStatusIndicator>
+          <MessageStatusIndicatorText>
+            <MessageStatusIndicatorItem name='star-filled' /> Status
+          </MessageStatusIndicatorText>
         </MessageStatusIndicator>
       </Message.LeftContainer>
       <Message.Container>

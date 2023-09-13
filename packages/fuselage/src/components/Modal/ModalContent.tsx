@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react';
 import React from 'react';
 
-import { Box } from '../Box';
+import Box from '../Box';
 import Scrollable from '../Scrollable';
 
 export type ModalContentProps = ComponentProps<typeof Box> & {
@@ -15,7 +15,7 @@ export const ModalContent = ({
 }: ModalContentProps) => (
   <Scrollable vertical onScrollContent={onScrollContent}>
     <Box rcx-modal__content>
-      <Box rcx-modal__content-wrapper {...props}>
+      <Box rcx-modal__content-wrapper mi={24} {...props}>
         {children}
       </Box>
     </Box>

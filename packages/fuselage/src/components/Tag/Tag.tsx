@@ -1,47 +1,52 @@
-import type { ComponentProps } from 'react';
+import type { AllHTMLAttributes, ReactNode } from 'react';
 import React from 'react';
 
-import type { Box } from '..';
 import { prependClassName } from '../../helpers/prependClassName';
 
-type TagProps = ComponentProps<typeof Box> & {
-  small?: boolean;
+type TagProps = {
+  medium?: boolean;
+  large?: boolean;
   variant?:
-    | 'secondary'
     | 'primary'
+    | 'secondary'
     | 'danger'
     | 'warning'
-    | 'ghost'
-    | 'default';
-  medium?: boolean;
+    | 'secondary-danger'
+    | 'featured';
   disabled?: boolean;
-};
+  icon?: ReactNode;
+} & AllHTMLAttributes<HTMLSpanElement>;
 
-export function Tag({
-  is: TagName = 'span',
-  small,
+export const Tag = ({
+  large,
   medium,
   className,
   disabled,
   onClick,
-  variant = 'default',
+  variant,
+  children,
+  icon,
   ...props
-}: TagProps) {
+}: TagProps) => {
   const modifiers = [
     variant,
-    small && 'small',
     medium && 'medium',
+    large && 'large',
     disabled && 'disabled',
     onClick && 'clickable',
   ]
-    .map((modifier) => `rcx-tag--${modifier}`)
     .filter(Boolean)
+    .map((modifier) => `rcx-tag--${modifier}`)
     .join(' ');
 
   return (
-    <TagName
+    <span
       className={prependClassName(className as string, `rcx-tag ${modifiers}`)}
+      onClick={onClick}
       {...props}
-    />
+    >
+      {icon}
+      <span className='rcx-tag__inner'>{children}</span>
+    </span>
   );
-}
+};

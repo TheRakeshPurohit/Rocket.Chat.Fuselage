@@ -16,6 +16,7 @@ export type UnorderedList = {
 export type ListItem = {
   type: 'LIST_ITEM';
   value: Inlines[];
+  number?: number;
 };
 
 export type Tasks = {
@@ -48,10 +49,17 @@ export type BigEmoji = {
   value: [Emoji] | [Emoji, Emoji] | [Emoji, Emoji, Emoji];
 };
 
-export type Emoji = {
-  type: 'EMOJI';
-  value: Plain;
-};
+export type Emoji =
+  | {
+      type: 'EMOJI';
+      value: Plain;
+      shortCode: string;
+    }
+  | {
+      type: 'EMOJI';
+      value: undefined;
+      unicode: string;
+    };
 
 export type Code = {
   type: 'CODE';
@@ -80,21 +88,42 @@ export type MarkupExcluding<T extends Markup> = Exclude<Markup, T>;
 
 export type Bold = {
   type: 'BOLD';
-  value: Array<MarkupExcluding<Bold> | Link>;
+  value: Array<
+    MarkupExcluding<Bold> | Link | Emoji | UserMention | ChannelMention
+  >;
 };
 
 export type Italic = {
   type: 'ITALIC';
-  value: Array<MarkupExcluding<Italic> | Link>;
+  value: Array<
+    MarkupExcluding<Italic> | Link | Emoji | UserMention | ChannelMention
+  >;
 };
 
 export type Strike = {
   type: 'STRIKE';
-  value: Array<MarkupExcluding<Strike> | Link>;
+  value: Array<
+    MarkupExcluding<Strike> | Link | Emoji | UserMention | ChannelMention
+  >;
 };
 
 export type Plain = {
   type: 'PLAIN_TEXT';
+  value: string;
+};
+
+export type LineBreak = {
+  type: 'LINE_BREAK';
+  value: undefined;
+};
+
+export type KaTeX = {
+  type: 'KATEX';
+  value: string;
+};
+
+export type InlineKaTeX = {
+  type: 'INLINE_KATEX';
   value: string;
 };
 
@@ -115,7 +144,7 @@ export type Link = {
   type: 'LINK';
   value: {
     src: Plain;
-    label: Markup;
+    label: Markup | Markup[];
   };
 };
 
@@ -152,6 +181,7 @@ export type Types = {
   ORDERED_LIST: OrderedList;
   LIST_ITEM: ListItem;
   IMAGE: Image;
+  LINE_BREAK: LineBreak;
 };
 
 export type ASTNode =
@@ -186,7 +216,8 @@ export type Inlines =
   | UserMention
   | ChannelMention
   | Emoji
-  | Color;
+  | Color
+  | InlineKaTeX;
 
 export type Blocks =
   | Code
@@ -195,6 +226,8 @@ export type Blocks =
   | ListItem
   | Tasks
   | OrderedList
-  | UnorderedList;
+  | UnorderedList
+  | LineBreak
+  | KaTeX;
 
-export type MarkdownAST = Array<Paragraph | Blocks> | [BigEmoji];
+export type Root = Array<Paragraph | Blocks> | [BigEmoji];

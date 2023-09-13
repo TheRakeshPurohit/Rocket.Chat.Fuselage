@@ -1,3 +1,5 @@
+import { parse as tldParse } from 'tldts';
+
 import type {
   BigEmoji,
   Code,
@@ -7,6 +9,13 @@ import type {
   Paragraph,
   Types,
   Task,
+  ListItem,
+  Inlines,
+  LineBreak,
+  Emoji,
+  KaTeX,
+  InlineKaTeX,
+  Link,
 } from './definitions';
 
 const generate =
@@ -61,11 +70,53 @@ export const plain = generate('PLAIN_TEXT');
 export const strike = generate('STRIKE');
 
 export const codeLine = generate('CODE_LINE');
-export const link = (() => {
-  const fn = generate('LINK');
-  return (src: string, label?: Markup) =>
-    fn({ src: plain(src), label: label || plain(src) });
-})();
+
+const isValidLink = (link: string) => {
+  try {
+    return Boolean(new URL(link));
+  } catch (error) {
+    return false;
+  }
+};
+
+export const link = (src: string, label?: Markup[]): Link => ({
+  type: 'LINK',
+  value: { src: plain(src), label: label ?? [plain(src)] },
+});
+
+export const autoLink = (src: string, customDomains?: string[]) => {
+  const validHosts = ['localhost', ...(customDomains ?? [])];
+  const { isIcann, isIp, isPrivate, domain } = tldParse(src, {
+    detectIp: false,
+    allowPrivateDomains: true,
+    validHosts,
+  });
+
+  if (
+    !(isIcann || isIp || isPrivate || (domain && validHosts.includes(domain)))
+  ) {
+    return plain(src);
+  }
+
+  const href = isValidLink(src) || src.startsWith('//') ? src : `//${src}`;
+
+  return link(href, [plain(src)]);
+};
+
+export const autoEmail = (src: string) => {
+  const href = `mailto:${src}`;
+
+  const { isIcann, isIp, isPrivate } = tldParse(href, {
+    detectIp: false,
+    allowPrivateDomains: true,
+  });
+
+  if (!(isIcann || isIp || isPrivate)) {
+    return plain(src);
+  }
+
+  return link(href, [plain(src)]);
+};
 
 export const image = (() => {
   const fn = generate('IMAGE');
@@ -84,31 +135,101 @@ export const orderedList = generate('ORDERED_LIST');
 
 export const unorderedList = generate('UNORDERED_LIST');
 
-export const listItem = generate('LIST_ITEM');
-
-export const list = generate('ORDERED_LIST');
+export const listItem = (text: Inlines[], number?: number): ListItem => ({
+  type: 'LIST_ITEM',
+  value: text,
+  ...(number && { number }),
+});
 
 export const mentionUser = (() => {
   const fn = generate('MENTION_USER');
   return (value: string) => fn(plain(value));
 })();
 
-export const emoji = (() => {
-  const fn = generate('EMOJI');
-  return (value: string) => fn(plain(value));
-})();
+export const emoji = (shortCode: string): Emoji => ({
+  type: 'EMOJI',
+  value: plain(shortCode),
+  shortCode,
+});
+
+export const emojiUnicode = (unicode: string): Emoji => ({
+  type: 'EMOJI',
+  value: undefined,
+  unicode,
+});
+
+export const emoticon = (emoticon: string, shortCode: string): Emoji => ({
+  type: 'EMOJI',
+  value: plain(emoticon),
+  shortCode,
+});
+
+const joinEmoji = (
+  current: Inlines,
+  previous: Inlines | undefined,
+  next: Inlines | undefined
+): Inlines => {
+  if (current.type !== 'EMOJI' || !current.value || (!previous && !next)) {
+    return current;
+  }
+
+  const hasEmojiAsNeighbor =
+    previous?.type === current.type || current.type === next?.type;
+  const hasPlainAsNeighbor =
+    (previous?.type === 'PLAIN_TEXT' && previous.value.trim() !== '') ||
+    (next?.type === 'PLAIN_TEXT' && next.value.trim() !== '');
+  const isEmoticon = current.shortCode !== current.value.value;
+
+  if (current.value && (hasEmojiAsNeighbor || hasPlainAsNeighbor)) {
+    if (isEmoticon) {
+      return current.value;
+    }
+
+    return {
+      ...current.value,
+      value: `:${current.value.value}:`,
+    };
+  }
+
+  return current;
+};
 
 export const reducePlainTexts = (
   values: Paragraph['value']
 ): Paragraph['value'] =>
   values.reduce((result, item, index) => {
-    if (index > 0) {
-      const previous = result[result.length - 1];
-      if (item.type === 'PLAIN_TEXT' && item.type === previous.type) {
-        previous.value += item.value;
+    const next = values[index + 1];
+    const current = joinEmoji(item, values[index - 1], next);
+    const previous: Inlines = result[result.length - 1];
+
+    if (previous) {
+      if (current.type === 'PLAIN_TEXT' && current.type === previous.type) {
+        previous.value += current.value;
         return result;
       }
     }
 
-    return [...result, item];
+    return [...result, current];
   }, [] as Paragraph['value']);
+export const lineBreak = (): LineBreak => ({
+  type: 'LINE_BREAK',
+  value: undefined,
+});
+
+export const katex = (content: string): KaTeX => ({
+  type: 'KATEX',
+  value: content,
+});
+
+export const inlineKatex = (content: string): InlineKaTeX => ({
+  type: 'INLINE_KATEX',
+  value: content,
+});
+
+export const phoneChecker = (text: string, number: string) => {
+  if (number.length < 5) {
+    return plain(text);
+  }
+
+  return link(`tel:${number}`, [plain(text)]);
+};

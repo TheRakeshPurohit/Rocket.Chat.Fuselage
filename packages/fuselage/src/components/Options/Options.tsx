@@ -13,24 +13,22 @@ import React, {
   useRef,
 } from 'react';
 
-import { Box } from '../Box';
+import { prevent } from '../../helpers/prevent';
+import Box from '../Box';
+import Option, { OptionHeader, OptionDivider } from '../Option';
 import Scrollable from '../Scrollable';
 import Tile from '../Tile';
-import Option, { OptionHeader, OptionDivider } from './Option';
 import { useCursor } from './useCursor';
 
 export { useCursor };
-
-const prevent = (e: SyntheticEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
 
 export type OptionType = [
   value: string | number,
   label: ReactNode,
   selected?: boolean,
-  type?: 'heading' | 'divider' | 'option'
+  disabled?: boolean,
+  type?: 'heading' | 'divider' | 'option',
+  url?: string
 ];
 
 type OptionsProps = Omit<ComponentProps<typeof Box>, 'onSelect'> & {
@@ -50,7 +48,7 @@ export const Empty = memo(({ customEmpty }: { customEmpty: string }) => (
 export const Options = forwardRef(
   (
     {
-      maxHeight = '144px',
+      maxHeight = 'x144',
       multiple,
       renderEmpty: EmptyComponent = Empty,
       options,
@@ -84,7 +82,7 @@ export const Options = forwardRef(
 
     const optionsMemoized = useMemo(
       () =>
-        options?.map(([value, label, selected, type], i) => {
+        options?.map(([value, label, selected, disabled, type, url], i) => {
           switch (type) {
             case 'heading':
               return <OptionHeader key={value}>{label}</OptionHeader>;
@@ -96,13 +94,17 @@ export const Options = forwardRef(
                   role='option'
                   label={label}
                   onMouseDown={(e: SyntheticEvent) => {
+                    if (disabled) {
+                      return;
+                    }
                     prevent(e);
-                    onSelect([value, label]);
+                    onSelect([value, label, selected, disabled, type, url]);
                     return false;
                   }}
                   key={value}
                   value={value}
                   selected={selected || (multiple !== true && null)}
+                  disabled={disabled}
                   focus={cursor === i || null}
                 />
               );
@@ -140,3 +142,28 @@ export const Options = forwardRef(
     );
   }
 );
+export const OptionContainer = forwardRef<
+  HTMLElement,
+  ComponentProps<typeof Box>
+>(({ children, ...props }, ref) => (
+  <Box rcx-options>
+    <Tile padding={0} paddingBlock={'x12'} paddingInline={0}>
+      <Scrollable vertical smooth>
+        <Tile
+          ref={ref}
+          elevation='0'
+          padding='none'
+          maxHeight='x240'
+          // onMouseDown={prevent}
+          // onClick={prevent}
+          // is='ol'
+          // aria-multiselectable={multiple || true}
+          // role='listbox'
+          {...props}
+        >
+          {children}
+        </Tile>
+      </Scrollable>
+    </Tile>
+  </Box>
+));

@@ -9,12 +9,20 @@
   margin-inline: lengths.margin(20);
   padding: lengths.padding(2);
 
-  border: lengths.border-width(2) solid colors.neutral(200);
-  border-radius: lengths.border-radius(2);
-  background: colors.foreground(alternative);
+  border: lengths.border-width(default) solid colors.stroke(extra-light);
+  border-radius: theme(
+    'message-toolbox-border-radius',
+    lengths.border-radius(medium)
+  );
+  background: colors.surface(room);
 
   &__wrapper {
-    @include mixins.visible-on-hover();
+    display: none;
+
+    @at-root .rcx-message:hover &,
+      &--visible {
+      display: inline-block;
+    }
   }
 
   @at-root .rcx-message & {

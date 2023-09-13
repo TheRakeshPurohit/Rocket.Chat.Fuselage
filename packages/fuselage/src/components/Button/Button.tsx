@@ -1,44 +1,50 @@
-import type { ComponentProps, Ref } from 'react';
+import type { AllHTMLAttributes, ComponentProps, Ref } from 'react';
 import React, { forwardRef, useMemo } from 'react';
 
-import { Box } from '../Box';
+import Box from '../Box';
+import { Icon } from '../Icon';
 
 export type ButtonProps = ComponentProps<typeof Box> & {
-  info?: boolean;
-  success?: boolean;
-  warning?: boolean;
-  danger?: boolean;
   primary?: boolean;
-  ghost?: boolean;
-  nude?: boolean;
-  ghostish?: boolean;
-  small?: boolean;
+  secondary?: boolean;
+  danger?: boolean;
+  warning?: boolean;
+  success?: boolean;
+  disabled?: boolean;
   mini?: boolean;
   tiny?: boolean;
+  small?: boolean;
+  medium?: boolean;
+  large?: boolean;
   square?: boolean;
   external?: boolean;
-};
+  icon?: ComponentProps<typeof Icon>['name'];
+} & Omit<
+    AllHTMLAttributes<HTMLButtonElement | HTMLAnchorElement>,
+    'is' | 'className' | 'size'
+  >;
 
 export const Button = forwardRef(function Button(
   {
-    info,
-    success,
-    warning,
-    danger,
     primary,
-    ghost,
-    nude,
-    ghostish,
+    secondary,
+    danger,
+    warning,
+    success,
     external,
+    icon,
     is = 'button',
     rel: _rel,
-    small,
     tiny,
     mini,
+    small,
+    medium,
+    large,
     square,
+    children,
     ...props
   }: ButtonProps,
-  ref: Ref<HTMLElement>
+  ref: Ref<HTMLButtonElement | HTMLAnchorElement>
 ) {
   const extraProps =
     (is === 'a' && {
@@ -52,41 +58,48 @@ export const Button = forwardRef(function Button(
 
   const kindAndVariantProps = useMemo(() => {
     const variant =
-      (info && 'info') ||
+      (primary && 'primary') ||
+      (secondary && success && 'secondary-success') ||
+      (secondary && warning && 'secondary-warning') ||
+      (secondary && danger && 'secondary-danger') ||
       (success && 'success') ||
       (warning && 'warning') ||
-      (danger && 'danger');
+      (danger && 'danger') ||
+      (secondary && 'secondary');
 
-    const kind =
-      (primary && !ghost && !nude && !ghostish && 'primary') ||
-      (!primary && ghost && !nude && !ghostish && 'ghost') ||
-      (!primary && !ghost && nude && !ghostish && 'nude') ||
-      (!primary && !ghost && !nude && ghostish && 'ghostish');
-
-    if (kind || variant) {
+    if (variant) {
       return {
-        [`rcx-button--${[kind, variant].filter(Boolean).join('-')}`]: true,
+        [`rcx-button--${[variant].filter(Boolean).join('-')}`]: true,
       };
     }
 
     return {};
-  }, [danger, ghost, ghostish, info, nude, primary, success, warning]);
+  }, [primary, secondary, danger, warning, success]);
 
   return (
     <Box
-      animated
       is={is}
+      type='button'
       rcx-button
       {...kindAndVariantProps}
       rcx-button--small={small}
+      rcx-button--medium={medium}
+      rcx-button--large={large}
       rcx-button--square={square}
-      rcx-button--small-square={small && square}
       rcx-button--tiny-square={tiny && square}
       rcx-button--mini-square={mini && square}
+      rcx-button--small-square={small && square}
+      rcx-button--medium-square={medium && square}
+      rcx-button--large-square={large && square}
       ref={ref}
       {...extraProps}
       {...props}
-    />
+    >
+      <span className='rcx-button--content'>
+        {icon && <Icon size='x16' name={icon} mie={4} />}
+        {children}
+      </span>
+    </Box>
   );
 });
 

@@ -1,7 +1,13 @@
 @use '../../../styles/lengths.scss';
+@use '../../../styles/functions.scss';
 @use '../../../styles/colors.scss';
 @use '../../../styles/typography.scss';
 @use '../mixins.scss';
+
+$message-system-background-color-selected: functions.theme(
+  'message-system-background-color-selected',
+  colors.status-background(success)
+);
 
 .rcx-message-system {
   @include typography.use-font-scale(c1);
@@ -13,34 +19,45 @@
   padding-block: lengths.padding(8);
   padding-inline: lengths.padding(20);
 
+  &--selected {
+    background: $message-system-background-color-selected !important;
+  }
+
   &__container {
     @include typography.use-with-truncated-text();
     display: flex;
     flex-direction: column;
     flex-shrink: 1;
+    align-self: center;
 
     width: 100%;
     margin-block: lengths.margin(-4);
   }
 
   &__body {
-    @include typography.use-font-scale(p2m);
+    @include typography.use-font-scale(p2);
     @include typography.use-with-truncated-text();
-    margin-inline: lengths.margin(4);
+    margin-inline: lengths.margin(2);
 
-    color: colors.foreground(hint);
-
-    font-style: italic;
+    color: colors.font(default);
   }
 
   &__name {
-    @include typography.use-font-scale(h5);
+    @include typography.use-font-scale(p2b);
     @include typography.use-with-truncated-text();
     flex-shrink: 0;
 
-    margin-inline: lengths.margin(4);
+    color: colors.font(default);
+  }
 
-    color: colors.foreground(default);
+  &__time {
+    @include typography.use-with-truncated-text();
+    @include typography.use-font-scale(p2);
+    flex-shrink: 0;
+
+    margin-inline: lengths.margin(2);
+
+    color: colors.font(default);
   }
 
   &__block {

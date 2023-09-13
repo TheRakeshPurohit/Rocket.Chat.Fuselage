@@ -1,12 +1,11 @@
 import { Box } from '@rocket.chat/fuselage';
+import { ActionLink, BackgroundLayer } from '@rocket.chat/layout';
 import type { ReactElement } from 'react';
 import type { SubmitHandler, Validate } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 
-import ActionLink from '../../common/ActionLink';
-import BackgroundLayer from '../../common/BackgroundLayer';
+import type { FormPageLayoutStyleProps } from '../../Types';
 import FormPageLayout from '../../common/FormPageLayout';
-import type { FormPageLayoutStyleProps } from '../../common/Types';
 import ResetPasswordForm from '../../forms/ResetPasswordForm';
 import type { ResetPasswordFormPayload } from '../../forms/ResetPasswordForm/ResetPasswordForm';
 
@@ -33,7 +32,7 @@ const ResetPasswordPage = ({
         styleProps={pageLayoutStyleProps}
       >
         <ResetPasswordForm {...props} />
-        <Box fontScale='p2' pbs='x40'>
+        <Box fontScale='p2' pbs={40}>
           <Trans i18nKey='component.wantToLogin'>
             Want to log in?
             <ActionLink fontScale='p2' onClick={onLogin}>

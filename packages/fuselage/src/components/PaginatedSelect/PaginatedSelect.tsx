@@ -8,13 +8,14 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 
 import type { SelectProps } from '..';
 import AnimatedVisibility from '../AnimatedVisibility';
-import { Box } from '../Box';
+import Box from '../Box';
 import { Icon } from '../Icon';
+import Margins from '../Margins';
 import { useVisible } from '../Options/useVisible';
 import { OptionsPaginated } from '../OptionsPaginated';
 import PositionAnimated from '../PositionAnimated';
-import PaginatedSelectAddon from './PaginatedSelectAddon';
-import PaginatedSelectFocus from './PaginatedSelectFocus';
+import SelectAddon from '../Select/SelectAddon';
+import SelectFocus from '../Select/SelectFocus';
 import PaginatedSelectWrapper from './PaginatedSelectWrapper';
 
 type PaginatedOptionType = {
@@ -25,7 +26,7 @@ export type PaginatedSelectProps = Omit<SelectProps, 'options'> & {
   anchor?: ElementType;
   options: PaginatedOptionType[];
   withTitle?: boolean;
-  endReached: (index: number) => void;
+  endReached?: (index: number) => void;
   setFilter?: (value: string | undefined | number) => void;
 };
 
@@ -55,7 +56,7 @@ export const PaginatedSelect = ({
   error,
   disabled,
   options = [],
-  anchor: Anchor = PaginatedSelectFocus,
+  anchor: Anchor = SelectFocus,
   onChange = () => {},
   placeholder = '',
   renderOptions: _Options = OptionsPaginated,
@@ -119,7 +120,7 @@ export const PaginatedSelect = ({
           <Box
             flexGrow={1}
             is='span'
-            mi='x4'
+            mi={4}
             rcx-select__item
             fontScale='p2m'
             color={valueLabel ? 'default' : 'hint'}
@@ -136,14 +137,18 @@ export const PaginatedSelect = ({
           onClick={show}
           onBlur={hide}
         />
-        <PaginatedSelectAddon mi='x4'>
-          <Icon
-            name={
-              visible === AnimatedVisibility.VISIBLE ? 'cross' : 'chevron-down'
-            }
-            size='x20'
-          />
-        </PaginatedSelectAddon>
+        <Margins inline='x4'>
+          <SelectAddon>
+            <Icon
+              name={
+                visible === AnimatedVisibility.VISIBLE
+                  ? 'chevron-up'
+                  : 'chevron-down'
+              }
+              size='x20'
+            />
+          </SelectAddon>
+        </Margins>
       </PaginatedSelectWrapper>
       <PositionAnimated visible={visible} anchor={containerRef}>
         <_Options

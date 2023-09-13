@@ -11,7 +11,7 @@ import {
 import type { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 
-import { Button, ButtonGroup, Icon } from '../..';
+import { Button, ButtonGroup, IconButton, Margins } from '../..';
 import { PropsVariationSection } from '../../../.storybook/helpers';
 
 export default {
@@ -28,83 +28,51 @@ export default {
           <Subtitle />
           <Description />
           <PrimaryStory />
-          <ArgsTable story={PRIMARY_STORY} />
           <Stories title={''} />
+          <ArgsTable story={PRIMARY_STORY} />
         </>
       ),
     },
   },
 } as ComponentMeta<typeof ButtonGroup>;
 
-export const Default = () => <Button onClick={action('click')}>Button</Button>;
-
-const Group: ComponentStory<typeof Button> = (args) => (
-  <ButtonGroup>
-    <Button {...args}>Neutral</Button>
-    <Button {...args} info>
-      Info
-    </Button>
-    <Button {...args} success>
-      Success
-    </Button>
-    <Button {...args} warning>
-      Warning
-    </Button>
-    <Button {...args} danger>
-      Danger
-    </Button>
-  </ButtonGroup>
+export const Default: ComponentStory<typeof Button> = () => (
+  <Button onClick={action('click')}>Button</Button>
 );
 
-export const Variants: ComponentStory<typeof Button> = Group.bind({});
-
-export const Primary: ComponentStory<typeof Button> = Group.bind({});
-Primary.args = {
-  primary: true,
-};
-
-export const Ghost: ComponentStory<typeof Button> = Group.bind({});
-Ghost.args = {
-  ghost: true,
-};
-
-export const Nude: ComponentStory<typeof Button> = Group.bind({});
-Nude.args = {
-  nude: true,
-};
-
-export const Ghostish: ComponentStory<typeof Button> = Group.bind({});
-Ghostish.args = {
-  ghostish: true,
-};
-
-export const Square: ComponentStory<typeof Button> = () => (
-  <Button square>
-    <Icon name='plus' size='x20' />
-  </Button>
+export const Variants: ComponentStory<typeof Button> = () => (
+  <Margins all='x8'>
+    <ButtonGroup>
+      <Button primary>Primary</Button>
+      <Button secondary>Secondary</Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button danger>Danger</Button>
+      <Button secondary danger>
+        Secondary Danger
+      </Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button warning>Warning</Button>
+      <Button secondary warning>
+        Secondary Warning
+      </Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button success>Success</Button>
+      <Button secondary success>
+        Secondary Success
+      </Button>
+    </ButtonGroup>
+  </Margins>
 );
 
 export const Sizes: ComponentStory<typeof ButtonGroup> = () => (
-  <>
-    <ButtonGroup marginBlockEnd={12}>
-      <Button small>Button</Button>
-      <Button>Button</Button>
-    </ButtonGroup>
-    <ButtonGroup>
-      <Button mini square>
-        <Icon name='circled-arrow-down' size='x16' />
-      </Button>
-      <Button tiny square>
-        <Icon name='circled-arrow-down' size='x20' />
-      </Button>
-      <Button small square>
-        <Icon name='circled-arrow-down' size='x24' />
-      </Button>
-      <Button square>
-        <Icon name='circled-arrow-down' size='x20' />
-      </Button>
-    </ButtonGroup>
-  </>
+  <ButtonGroup marginBlockEnd={12}>
+    <Button small>Small</Button>
+    <Button medium>Medium</Button>
+    <Button>Default</Button>
+  </ButtonGroup>
 );
 
 export const AsLink: ComponentStory<typeof Button> = () => (
@@ -126,107 +94,47 @@ export const States = () => (
         disabled: { disabled: true },
       }}
       yAxis={{
-        'square + icon': {
-          square: true,
-          children: <Icon name='circled-arrow-down' size='x20' />,
-        },
         'icon + text': {
-          children: (
-            <>
-              <Icon name='baloon-text' size='x16' /> Button
-            </>
-          ),
+          children: 'Button',
+          icon: 'baloon-text',
         },
         'text': {
           children: 'Button',
-        },
-        'info': {
-          children: 'Button',
-          info: true,
-        },
-        'success': {
-          children: 'Button',
-          success: true,
-        },
-        'warning': {
-          children: 'Button',
-          warning: true,
-        },
-        'danger': {
-          children: 'Button',
-          danger: true,
         },
         'primary': {
           children: 'Button',
           primary: true,
         },
-        'primary + info': {
+        'secondary': {
           children: 'Button',
-          primary: true,
-          info: true,
+          secondary: true,
         },
-        'primary + success': {
+        'danger': {
           children: 'Button',
-          primary: true,
-          success: true,
-        },
-        'primary + warning': {
-          children: 'Button',
-          primary: true,
-          warning: true,
-        },
-        'primary + danger': {
-          children: 'Button',
-          primary: true,
           danger: true,
         },
-        'ghost': {
+        'secondary-danger': {
           children: 'Button',
-          ghost: true,
-        },
-        'ghost + info': {
-          children: 'Button',
-          ghost: true,
-          info: true,
-        },
-        'ghost + success': {
-          children: 'Button',
-          ghost: true,
-          success: true,
-        },
-        'ghost + warning': {
-          children: 'Button',
-          ghost: true,
-          warning: true,
-        },
-        'ghost + danger': {
-          children: 'Button',
-          ghost: true,
+          secondary: true,
           danger: true,
         },
-        'nude': {
+        'warning': {
           children: 'Button',
-          nude: true,
-        },
-        'nude + info': {
-          children: 'Button',
-          nude: true,
-          info: true,
-        },
-        'nude + success': {
-          children: 'Button',
-          nude: true,
-          success: true,
-        },
-        'nude + warning': {
-          children: 'Button',
-          nude: true,
           warning: true,
         },
-        'nude + danger': {
+        'secondary-warning': {
           children: 'Button',
-          nude: true,
-          danger: true,
+          secondary: true,
+          warning: true,
+        },
+        'success': {
+          children: 'Button',
+          success: true,
+        },
+        'secondary-success': {
+          children: 'Button',
+          secondary: true,
+          success: true,
         },
       }}
     />
@@ -244,137 +152,62 @@ export const States = () => (
         disabled: { disabled: true },
       }}
       yAxis={{
-        'square + icon': {
-          square: true,
-          children: <Icon name='circled-arrow-down' size='x20' />,
-        },
         'icon + text': {
-          children: (
-            <>
-              <Icon name='baloon-text' size='x16' /> Button
-            </>
-          ),
+          children: 'Button',
+          icon: 'baloon-text',
         },
         'text': {
           children: 'Button',
-        },
-        'info': {
-          children: 'Button',
-          info: true,
-        },
-        'success': {
-          children: 'Button',
-          success: true,
-        },
-        'warning': {
-          children: 'Button',
-          warning: true,
-        },
-        'danger': {
-          children: 'Button',
-          danger: true,
         },
         'primary': {
           children: 'Button',
           primary: true,
         },
-        'primary + info': {
+        'secondary': {
           children: 'Button',
-          primary: true,
-          info: true,
+          secondary: true,
         },
-        'primary + success': {
+        'danger': {
           children: 'Button',
-          primary: true,
-          success: true,
-        },
-        'primary + warning': {
-          children: 'Button',
-          primary: true,
-          warning: true,
-        },
-        'primary + danger': {
-          children: 'Button',
-          primary: true,
           danger: true,
         },
-        'ghost': {
+        'secondary-danger': {
           children: 'Button',
-          ghost: true,
-        },
-        'ghost + info': {
-          children: 'Button',
-          ghost: true,
-          info: true,
-        },
-        'ghost + success': {
-          children: 'Button',
-          ghost: true,
-          success: true,
-        },
-        'ghost + warning': {
-          children: 'Button',
-          ghost: true,
-          warning: true,
-        },
-        'ghost + danger': {
-          children: 'Button',
-          ghost: true,
+          secondary: true,
           danger: true,
         },
-        'nude': {
+        'warning': {
           children: 'Button',
-          nude: true,
-        },
-        'nude + info': {
-          children: 'Button',
-          nude: true,
-          info: true,
-        },
-        'nude + success': {
-          children: 'Button',
-          nude: true,
-          success: true,
-        },
-        'nude + warning': {
-          children: 'Button',
-          nude: true,
           warning: true,
         },
-        'nude + danger': {
+        'secondary-warning': {
           children: 'Button',
-          nude: true,
-          danger: true,
-        },
-        'ghostish': {
-          children: 'Button',
-          ghostish: true,
-        },
-        'ghostish + info': {
-          children: 'Button',
-          ghostish: true,
-          info: true,
-        },
-        'ghostish + success': {
-          children: 'Button',
-          ghostish: true,
-          success: true,
-        },
-        'ghostish + warning': {
-          children: 'Button',
-          ghostish: true,
+          secondary: true,
           warning: true,
         },
-        'ghostish + danger': {
+        'success': {
           children: 'Button',
-          ghostish: true,
-          danger: true,
+          success: true,
+        },
+        'secondary-success': {
+          children: 'Button',
+          secondary: true,
+          success: true,
         },
       }}
     />
   </>
 );
-// export const Variants = Group.bind({});
-// export const Variants = Group.bind({});
-// export const Variants = Group.bind({});
-// export const Variants = Group.bind({});
+
+export const AsIconButton: ComponentStory<typeof IconButton> = (args) => (
+  <IconButton {...args} icon='arrow-back' onClick={action('click')} />
+);
+
+AsIconButton.parameters = {
+  docs: {
+    description: {
+      story:
+        'See full IconButton documentation [here](../?path=/docs/inputs-iconbutton)',
+    },
+  },
+};

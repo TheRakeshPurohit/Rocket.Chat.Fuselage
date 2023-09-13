@@ -6,6 +6,46 @@ import WorkspaceUrlInput from './WorkspaceUrlInput';
 
 type Args = ComponentProps<typeof CreateCloudWorkspaceForm>;
 
+const isValidLength = (domainName: string) => {
+  if (domainName.length < 3) {
+    return 'Workspace URL should have at least 3 characters';
+  }
+  return true;
+};
+
+const isValidFirstSubstring = (domainName: string) => {
+  const firstSubstring = domainName.slice(0, 3);
+  if (firstSubstring === 'rc-') {
+    return 'Workspace URL address unavailable';
+  }
+  return true;
+};
+
+const isValidCharacter = (domainName: string) => {
+  const regex = RegExp('^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))$');
+  if (!regex.test(domainName)) {
+    return 'Invalid character for Workspace URL';
+  }
+  return true;
+};
+
+const isValidDomainName = async (domainName: string) => {
+  const validationList = [
+    isValidLength,
+    isValidFirstSubstring,
+    isValidCharacter,
+  ];
+
+  for (const validate of validationList) {
+    const validateMessage = validate(domainName);
+    if (typeof validateMessage === 'string') {
+      return validateMessage;
+    }
+  }
+
+  return true;
+};
+
 export default {
   title: 'forms/CreateCloudWorkspaceForm',
   component: CreateCloudWorkspaceForm,
@@ -14,15 +54,18 @@ export default {
     actions: { argTypesRegex: '^on.*' },
   },
   args: {
-    currentStep: 1,
-    stepCount: 2,
     serverRegionOptions: [
       ['us', 'US'],
       ['br', 'BR'],
     ],
+    languageOptions: [
+      ['en', 'English'],
+      ['pt', 'Português'],
+    ],
     domain: 'rocket.chat',
-    validateUrl: async (url) => url !== 'rocket',
-    validateEmail: async (email) => email !== 'rocket',
+    validateUrl: isValidDomainName,
+    validateEmail: async (email) =>
+      email === 'rocket@rocket.chat' ? 'invalid email' : true,
   },
 } as Meta<Args>;
 

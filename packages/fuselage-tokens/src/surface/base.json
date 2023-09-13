@@ -1,0 +1,10 @@
+{
+  "surface": {
+    "light": { "value": "{colors.white}" },
+    "tint": { "value": "{colors.n100}" },
+    "neutral": { "value": "{colors.n400}" },
+    "disabled": { "value": "{colors.n100}" },
+    "hover": { "value": "{colors.n200}" },
+    "dark": { "value": "{colors.n900}" }
+  }
+}

@@ -10,17 +10,15 @@ import {
   Box,
 } from '@rocket.chat/fuselage';
 import { useBreakpoints, useUniqueId } from '@rocket.chat/fuselage-hooks';
+import { ActionLink, Form } from '@rocket.chat/layout';
 import type { ReactElement, ReactNode } from 'react';
 import { useEffect } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../common/Form';
-
 export type OrganizationInfoPayload = {
   organizationName: string;
-  organizationType: string;
   organizationIndustry: string;
   organizationSize: string;
   country: string;
@@ -29,7 +27,6 @@ export type OrganizationInfoPayload = {
 type OrganizationInfoFormProps = {
   currentStep: number;
   stepCount: number;
-  organizationTypeOptions: SelectOption[];
   organizationIndustryOptions: SelectOption[];
   organizationSizeOptions: SelectOption[];
   countryOptions: SelectOption[];
@@ -43,7 +40,6 @@ type OrganizationInfoFormProps = {
 const OrganizationInfoForm = ({
   currentStep,
   stepCount,
-  organizationTypeOptions,
   organizationIndustryOptions,
   organizationSizeOptions,
   countryOptions,
@@ -58,7 +54,6 @@ const OrganizationInfoForm = ({
   const isMobile = !breakpoints.includes('md');
 
   const organizationNameField = useUniqueId();
-  const organizationTypeField = useUniqueId();
   const organizationIndustryField = useUniqueId();
   const organizationSizeField = useUniqueId();
   const countryField = useUniqueId();
@@ -79,9 +74,11 @@ const OrganizationInfoForm = ({
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <Form.Steps currentStep={currentStep} stepCount={stepCount} />
-      <Form.Title>{t('form.organizationInfoForm.title')}</Form.Title>
-      <Form.Subtitle>{t('form.organizationInfoForm.subtitle')}</Form.Subtitle>
+      <Form.Header>
+        <Form.Steps currentStep={currentStep} stepCount={stepCount} />
+        <Form.Title>{t('form.organizationInfoForm.title')}</Form.Title>
+        <Form.Subtitle>{t('form.organizationInfoForm.subtitle')}</Form.Subtitle>
+      </Form.Header>
       <Form.Container>
         <FieldGroup>
           <Field>
@@ -100,27 +97,6 @@ const OrganizationInfoForm = ({
             {errors.organizationName && (
               <Field.Error>{t('component.form.requiredField')}</Field.Error>
             )}
-          </Field>
-          <Field>
-            <Field.Label htmlFor={organizationTypeField}>
-              {t('form.organizationInfoForm.fields.organizationType.label')}
-            </Field.Label>
-            <Field.Row>
-              <Controller
-                name='organizationType'
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={organizationTypeOptions}
-                    placeholder={t(
-                      'form.organizationInfoForm.fields.organizationType.placeholder'
-                    )}
-                    id={organizationTypeField}
-                  />
-                )}
-              />
-            </Field.Row>
           </Field>
           <Field>
             <Field.Label htmlFor={organizationIndustryField}>
@@ -214,9 +190,9 @@ const OrganizationInfoForm = ({
           {onClickSkip && (
             <Box withTruncatedText flexGrow={1}>
               <ButtonGroup flexGrow={1} align='end'>
-                <Button nude info onClick={onClickSkip}>
+                <ActionLink onClick={onClickSkip}>
                   {t('component.form.action.skip')}
-                </Button>
+                </ActionLink>
               </ButtonGroup>
             </Box>
           )}

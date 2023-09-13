@@ -5,9 +5,11 @@ import { MessageContainer } from './MessageContainer';
 import { MessageContainerFixed } from './MessageContainerFixed';
 import { MessageDivider } from './MessageDivider';
 import { MessageHeader } from './MessageHeader';
+import { MessageHighlight } from './MessageHighlight';
 import { MessageLeftContainer } from './MessageLeftContainer';
 import MessageMetrics from './MessageMetrics';
 import { MessageName } from './MessageName';
+import { MessageNameContainer } from './MessageNameContainer';
 import { MessageRole } from './MessageRole';
 import { MessageRoles } from './MessageRoles';
 import { MessageTimestamp } from './MessageTimestamp';
@@ -27,12 +29,15 @@ export * from './MessageBody';
 export * from './MessageContainer';
 export * from './MessageContainerFixed';
 export * from './MessageHeader';
+export * from './MessageNameContainer';
 export * from './MessageLeftContainer';
 export * from './MessageName';
 export * from './MessageRole';
 export * from './MessageRoles';
 export * from './MessageTimestamp';
 export * from './MessageUsername';
+export * from './MessageEmoji';
+export * from './MessageHighlight';
 
 export default Object.assign(Message, {
   Metrics: MessageMetrics,
@@ -44,9 +49,11 @@ export default Object.assign(Message, {
   Body: MessageBody,
   Block: MessageBlock,
   Timestamp: MessageTimestamp,
+  NameContainer: MessageNameContainer,
   Name: MessageName,
   Username: MessageUsername,
   Roles: MessageRoles,
   Role: MessageRole,
   Divider: MessageDivider,
+  Highlight: MessageHighlight,
 });
